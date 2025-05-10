@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Toes - Kids Toys</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('webimg1.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        header {
+            background-color: rgba(250, 69, 220, 0.733);
+            text-align: center;
+            padding: 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+        }
+        nav {
+            background-color: rgba(250, 69, 220, 0.733);
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        nav a:hover {
+            color: #333;
+        }
+        .search-bar {
+            margin: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+        }
+        .product-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            width: 300px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .action-buttons {
+            margin-top: 10px;
+        }
+        .action-buttons button {
+            background-color: rgba(250, 69, 220, 0.733);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+        }
+        .action-buttons button:hover {
+            background-color: rgba(200, 50, 180, 0.8);
+        }
+        .action-buttons i {
+            margin-right: 5px;
+        }
+        footer {
+            background-color: rgba(250, 69, 220, 0.733);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Little Toes - Kids Toys
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search products...">
+    </div>
+
+    <!-- Products Container -->
+    <div class="products">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 1">
+            <h3>Plush Teddy Bear</h3>
+            <p>$19.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 2">
+            <h3>Building Blocks</h3>
+            <p>$29.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 3">
+            <h3>Kids Scooter</h3>
+            <p>$49.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 4">
+            <h3>Dinosaur Figurines</h3>
+            <p>$24.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 5">
+            <h3>Remote Control Car</h3>
+            <p>$39.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Toy 6">
+            <h3>Wooden Train Set</h3>
+            <p>$34.99</p>
+            <div class="action-buttons">
+                <button onclick="addToWishlist()">Add to Wishlist</button>
+                <button onclick="likeProduct()">Like</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Little Toes. All rights reserved.
+    </footer>
+
+    <script>
+        function addToWishlist() {
+            alert("Added to Wishlist!");
+        }
+        function likeProduct() {
+            alert("You liked this product!");
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById("search");
+        searchInput.addEventListener("input", (e) => {
+            const filter = e.target.value.toLowerCase();
+            const productCards = document.querySelectorAll(".product-card");
+
+            productCards.forEach((card) => {
+                const title = card.querySelector("h3").textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

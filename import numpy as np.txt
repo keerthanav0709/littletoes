@@ -1,0 +1,54 @@
+import numpy as np
+import pandas as pd
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Number of students to simulate
+n_students = 1000
+
+# Simulate student demographic data
+student_ids = np.arange(1, n_students + 1)
+ages = np.random.randint(18, 40, size=n_students)
+genders = np.random.choice(['Male', 'Female'], size=n_students)
+previous_education = np.random.choice(['High School', 'Bachelor', 'Master'], size=n_students)
+
+# Simulate engagement data
+time_spent_on_course = np.random.randint(1, 100, size=n_students)  # Hours spent on course
+quiz_attempts = np.random.randint(0, 5, size=n_students)
+forum_posts = np.random.randint(0, 20, size=n_students)
+assignment_submissions = np.random.randint(0, 10, size=n_students)
+
+# Simulate performance data
+quiz_scores = np.random.randint(0, 100, size=n_students)  # Quiz scores (0-100 scale)
+final_grades = np.random.randint(0, 100, size=n_students)  # Final course grades (0-100 scale)
+
+# Simulate course recommendation features (previously taken courses)
+courses_taken = np.random.choice(['Math', 'Science', 'History', 'Computer Science', 'Literature'], size=n_students)
+preferred_subjects = np.random.choice(['Math', 'Science', 'History', 'Computer Science', 'Literature'], size=n_students)
+
+# Simulate dropout (1 = dropout, 0 = complete)
+dropout = np.random.choice([0, 1], size=n_students, p=[0.7, 0.3])
+
+# Create the DataFrame
+df_students = pd.DataFrame({
+    'student_id': student_ids,
+    'age': ages,
+    'gender': genders,
+    'previous_education': previous_education,
+    'time_spent_on_course': time_spent_on_course,
+    'quiz_attempts': quiz_attempts,
+    'forum_posts': forum_posts,
+    'assignment_submissions': assignment_submissions,
+    'quiz_scores': quiz_scores,
+    'final_grades': final_grades,
+    'dropout': dropout,
+    'courses_taken': courses_taken,
+    'preferred_subjects': preferred_subjects
+})
+
+# Display the first few rows of the dataset
+print(df_students.head())
+
+# Save the dataset to a CSV file
+df_students.to_csv('student_data_simulation.csv', index=False)

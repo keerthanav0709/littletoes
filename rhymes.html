@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Rhymes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('webimg1.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+    }
+    .header {
+      background-color: rgba(250, 69, 220, 0.733);
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .search-bar {
+      margin: 20px;
+      text-align: center;
+    }
+    .search-bar input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .rhymes-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px;
+    }
+    .rhyme-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin: 10px;
+      width: 300px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .rhyme-card:hover {
+      transform: scale(1.05);
+    }
+    .rhyme-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .action-buttons {
+      margin-top: 10px;
+    }
+    .action-buttons button {
+      background-color: rgba(250, 69, 220, 0.733);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 16px;
+      color: white;
+    }
+    .action-buttons button:hover {
+      background-color: rgba(200, 50, 180, 0.8);
+    }
+    .action-buttons i {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Kids Rhymes</div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search rhymes...">
+  </div>
+
+  <!-- Rhymes Container -->
+  <div class="rhymes-container">
+    <!-- Dynamic Rhyme Cards -->
+  </div>
+
+  <script>
+    // Array of rhymes
+    const rhymes = [
+      {
+        title: "Twinkle Twinkle Little Star",
+        image: "twinklestar.avif",
+        audio: "twinkle.mp3",
+      },
+      {
+        title: "Humpty Dumpty",
+        image: "dumptyegg.jpg",
+        audio: "humpty.mp3",
+      },
+      {
+        title: "Baa Baa Black Sheep",
+        image: "blacksheep.jpeg",
+        audio: "baa_baa.mp3",
+      },
+      {
+        title: "Johny Johny",
+        image: "johny.png",
+        audio: "johny johny.mp3",
+      },
+      {
+        title: "Alphabet rhymes",
+        image: "abc.jpg",
+        audio: "ABC.mp3",
+      },
+
+    ];
+
+    // Render rhyme cards dynamically
+    const container = document.querySelector(".rhymes-container");
+    rhymes.forEach((rhyme) => {
+      const rhymeCard = document.createElement("div");
+      rhymeCard.className = "rhyme-card";
+      rhymeCard.innerHTML = `
+        <img src="${rhyme.image}" alt="${rhyme.title}">
+        <h2>${rhyme.title}</h2>
+        <audio controls>
+          <source src="${rhyme.audio}" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="action-buttons">
+          <button onclick="downloadRhyme('${rhyme.audio}', '${rhyme.title}')">
+            <i class="fas fa-download"></i> Download
+          </button>
+        </div>
+      `;
+      container.appendChild(rhymeCard);
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("input", (e) => {
+      const filter = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll(".rhyme-card");
+
+      cards.forEach((card) => {
+        const title = card.querySelector("h2").textContent.toLowerCase();
+        if (title.includes(filter)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+
+    // Download functionality
+    function downloadRhyme(audioSrc, title) {
+      const link = document.createElement("a");
+      link.href = audioSrc;
+      link.setAttribute("download", `${title}.mp3`);
+      document.body.appendChild(link); // Append link to the body
+      link.click(); // Trigger download
+      document.body.removeChild(link); // Remove link after download
+    }
+  </script>
+
+  <!-- Include Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

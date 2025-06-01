@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Word Search Game for Kids</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background-color: #fff;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    .dark {
+      background-color: #121212;
+      color: #eee;
+    }
+
+    h1 {
+      color: #e91e63;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      max-width: 400px;
+      margin: 20px auto;
+      user-select: none;
+    }
+
+    .cell {
+      background: white;
+      border: 1px solid #ccc;
+      font-size: 20px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 35px;
+      width: 35px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .dark .cell {
+      background: #333;
+      color: white;
+    }
+
+    .cell.selected {
+      background-color: #90caf9;
+    }
+
+    .cell.found {
+      background-color: #66bb6a;
+      color: white;
+    }
+
+    #word-list {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #score {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    #theme-toggle {
+      margin-bottom: 10px;
+      cursor: pointer;
+      background: #e91e63;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 500px) {
+      .cell {
+        height: 30px;
+        width: 30px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle">Change Theme</button>
+  <h1>🔍 Word Search Game for Kids</h1>
+  <div id="grid"></div>
+  <div id="word-list"></div>
+  <div id="score">Score: 0 / 0</div>
+
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const gridSize = 10;
+    const allPossibleWords = ['CAT', 'DOG', 'SUN', 'BOOK', 'BALL', 'TREE', 'FISH', 'LION', 'ZEBRA', 'HAT', 'CUP', 'CAR', 'BIRD', 'MILK', 'CAKE'];
+    const words = [];
+    const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(''));
+    const foundWords = new Set();
+    let selectedCells = [];
+
+    // Pick 5 random words
+    while (words.length < 5) {
+      const word = allPossibleWords[Math.floor(Math.random() * allPossibleWords.length)];
+      if (!words.includes(word)) words.push(word);
+    }
+
+    function placeWord(word) {
+      const horizontal = Math.random() < 0.5;
+      const maxRow = horizontal ? gridSize : gridSize - word.length;
+      const maxCol = horizontal ? gridSize - word.length : gridSize;
+      let row, col, fits = false;
+
+      while (!fits) {
+        row = Math.floor(Math.random() * maxRow);
+        col = Math.floor(Math.random() * maxCol);
+        fits = true;
+        for (let i = 0; i < word.length; i++) {
+          const r = row + (horizontal ? 0 : i);
+          const c = col + (horizontal ? i : 0);
+          if (grid[r][c] && grid[r][c] !== word[i]) {
+            fits = false;
+            break;
+          }
+        }
+      }
+
+      for (let i = 0; i < word.length; i++) {
+        const r = row + (horizontal ? 0 : i);
+        const c = col + (horizontal ? i : 0);
+        grid[r][c] = word[i];
+      }
+    }
+
+    function fillRandomLetters() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          if (!grid[r][c]) {
+            grid[r][c] = letters[Math.floor(Math.random() * letters.length)];
+          }
+        }
+      }
+    }
+
+    function buildGrid() {
+      const gridDiv = document.getElementById('grid');
+      gridDiv.innerHTML = '';
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.textContent = grid[r][c];
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          cell.addEventListener('mousedown', handleStart);
+          cell.addEventListener('mouseenter', handleEnter);
+          cell.addEventListener('mouseup', handleEnd);
+
+          cell.addEventListener('touchstart', handleStart);
+          cell.addEventListener('touchmove', handleEnterTouch);
+          cell.addEventListener('touchend', handleEnd);
+
+          gridDiv.appendChild(cell);
+        }
+      }
+    }
+
+    function handleStart(e) {
+      e.preventDefault();
+      selectedCells = [];
+      e.target.classList.add('selected');
+      selectedCells.push(e.target);
+    }
+
+    function handleEnter(e) {
+      if (e.buttons !== 1) return;
+      if (!selectedCells.includes(e.target)) {
+        e.target.classList.add('selected');
+        selectedCells.push(e.target);
+      }
+    }
+
+    function handleEnterTouch(e) {
+      const touch = e.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (target && target.classList.contains('cell') && !selectedCells.includes(target)) {
+        target.classList.add('selected');
+        selectedCells.push(target);
+      }
+    }
+
+    function handleEnd() {
+      const word = selectedCells.map(cell => cell.textContent).join('');
+      const reversed = word.split('').reverse().join('');
+      if (words.includes(word) || words.includes(reversed)) {
+        selectedCells.forEach(cell => cell.classList.remove('selected'));
+        selectedCells.forEach(cell => cell.classList.add('found'));
+        foundWords.add(word);
+      } else {
+        selectedCells.forEach(cell => cell.classList.remove('selected'));
+      }
+      selectedCells = [];
+      updateScore();
+    }
+
+    function displayWords() {
+      document.getElementById('word-list').textContent = `Find these words: ${words.join(', ')}`;
+      document.getElementById('score').textContent = `Score: 0 / ${words.length}`;
+    }
+
+    function updateScore() {
+      document.getElementById('score').textContent = `Score: ${foundWords.size} / ${words.length}`;
+      if (foundWords.size === words.length) {
+        startConfetti();
+      }
+    }
+
+    function changeTheme() {
+      document.body.classList.toggle('dark');
+    }
+
+    function startConfetti() {
+      const duration = 3 * 1000;
+      const end = Date.now() + duration;
+      (function frame() {
+        confetti({
+          particleCount: 7,
+          angle: Math.random() * 60 + 150,
+          spread: 100,
+          startVelocity: 30,
+          gravity: 0.5,
+          origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2,
+          },
+          colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    }
+
+    // Setup game
+    words.forEach(placeWord);
+    fillRandomLetters();
+    buildGrid();
+    displayWords();
+
+    document.getElementById('theme-toggle').addEventListener('click', changeTheme);
+  </script>
+</body>
+</html>

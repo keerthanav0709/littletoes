@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Storytelling</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('p1imgi2.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+    }
+
+    header {
+      background: rgba(200, 50, 180, 0.8);
+      text-align: center;
+      padding: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #eee9e7;
+    }
+
+    .search-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .search-container input {
+      width: 80%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid rgba(200, 50, 180, 0.8);
+      border-radius: 5px;
+    }
+
+    .stories-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .story-card {
+      background: #fff;
+      border: 2px solid rgba(200, 50, 180, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 15px;
+      width: 300px;
+      text-align: center;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .story-card:hover {
+      transform: scale(1.05);
+    }
+
+    .story-card img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .story-card h2 {
+      font-size: 1.5rem;
+      color: #1d1c1c;
+      margin: 10px 0;
+    }
+
+    .action-buttons {
+      margin-bottom: 15px;
+    }
+
+    .action-buttons a {
+      display: inline-block;
+      text-decoration: none;
+      background: rgba(200, 50, 180, 0.8);
+      color: #e9e9e7;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    .action-buttons a:hover {
+      background: #ff4500;
+      color: #fff;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      background: #e7e3e2;
+      color: #1d1a1a;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Storytelling</h1>
+    <p style ="color: #f8f8f8;
+      font-size: 1.2rem;
+      margin-top: 8px;"">Discover magical tales and morals for life!</p>
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Search stories..." oninput="filterStories()" />
+    </div>
+  </header>
+
+  <section class="stories-container">
+    <div class="story-card" data-title="The Lion and the Mouse">
+      <img src="lionandm.jpg" alt="The Lion and the Mouse">
+      <h2>The Lion and the Mouse</h2>
+      <div class="action-buttons">
+        <a href="lion-mouse.html">Read Story</a>
+      </div>
+    </div>
+
+    <div class="story-card" data-title="The Tortoise and the Hare">
+      <img src="hare.jpg" alt="The Tortoise and the Hare">
+      <h2>The Tortoise and the Hare</h2>
+      <div class="action-buttons">
+        <a href="tortoise-hare.html">Read Story</a>
+      </div>
+    </div>
+
+    <div class="story-card" data-title="Goldilocks and the Three Bears">
+      <img src="gold.jpg" alt="Goldilocks and the Three Bears">
+      <h2>Goldilocks and the Three Bears</h2>
+      <div class="action-buttons">
+        <a href="goldilocks.html">Read Story</a>
+      </div>
+    </div>
+
+    <div class="story-card" data-title="The Ugly Duckling">
+      <img src="duck.jpg" alt="The Ugly Duckling">
+      <h2>The Ugly Duckling</h2>
+      <div class="action-buttons">
+        <a href="ugly-duckling.html">Read Story</a>
+      </div>
+    </div>
+
+    <div class="story-card" data-title="Cinderella">
+      <img src="cinderella.jpg" alt="Cinderella">
+      <h2>Cinderella</h2>
+      <div class="action-buttons">
+        <a href="cinderella.html">Read Story</a>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <script>
+    function filterStories() {
+      const input = document.getElementById("search").value.toLowerCase();
+      const cards = document.querySelectorAll(".story-card");
+
+      cards.forEach(card => {
+        const title = card.getAttribute("data-title").toLowerCase();
+        if (title.includes(input)) {
+          card.classList.remove("hidden");
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+    }
+  </script>
+</body>
+</html>

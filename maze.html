@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Puzzle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #maze-container {
+            width: 600px;
+            height: 600px;
+            border: 2px solid #333;
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
+        }
+
+        .cell {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wall {
+            background-color: black;
+        }
+
+        .path {
+            background-color: white;
+        }
+
+        .start {
+            background-color: green;
+        }
+
+        .end {
+            background-color: red;
+        }
+
+        .player {
+            background-color: blue;
+        }
+
+        /* Congratulatory message styling */
+        #congrats-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-size: 3rem;
+            text-align: center;
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+
+        #congrats-message button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #congrats-message button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="maze-container"></div>
+
+    <!-- Congratulatory Message Overlay -->
+    <div id="congrats-message">
+        <div>🎉 Congratulations! You Solved the Maze! 🎉</div>
+        <button onclick="restartGame()">Play Again</button>
+    </div>
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const rows = 20;
+        const cols = 20;
+        let playerPosition = { x: 0, y: 0 };
+
+        // Maze generation using recursive backtracking
+        function generateMaze(rows, cols) {
+            const maze = Array.from({ length: rows }, () => Array(cols).fill('wall'));
+
+            function carvePassages(cx, cy) {
+                const directions = [
+                    [0, 2],   // Right
+                    [2, 0],   // Down
+                    [0, -2],  // Left
+                    [-2, 0],  // Up
+                ];
+                directions.sort(() => Math.random() - 0.5); // Shuffle directions
+
+                for (const [dx, dy] of directions) {
+                    const nx = cx + dx;
+                    const ny = cy + dy;
+
+                    if (nx >= 0 && ny >= 0 && nx < rows && ny < cols && maze[nx][ny] === 'wall') {
+                        maze[cx + dx / 2][cy + dy / 2] = 'path'; // Carve between cells
+                        maze[nx][ny] = 'path';
+                        carvePassages(nx, ny);
+                    }
+                }
+            }
+
+            // Start carving from the top-left corner
+            maze[0][0] = 'start';
+            carvePassages(0, 0);
+
+            // Guarantee a path to the end
+            let x = 0, y = 0;
+            while (x < rows - 1 || y < cols - 1) {
+                if (x < rows - 1 && Math.random() > 0.5) {
+                    x++;
+                } else if (y < cols - 1) {
+                    y++;
+                }
+                maze[x][y] = 'path';
+            }
+
+            maze[rows - 1][cols - 1] = 'end';
+            return maze;
+        }
+
+        function renderMaze(maze) {
+            const container = document.getElementById('maze-container');
+            container.innerHTML = '';
+
+            maze.forEach((row, x) => {
+                row.forEach((cell, y) => {
+                    const div = document.createElement('div');
+                    div.className = `cell ${cell}`;
+                    div.dataset.x = x;
+                    div.dataset.y = y;
+                    container.appendChild(div);
+
+                    // Add the player to the start position
+                    if (cell === 'start') {
+                        div.classList.add('player');
+                        playerPosition = { x, y };
+                    }
+                });
+            });
+        }
+
+        function movePlayer(dx, dy) {
+            const { x, y } = playerPosition;
+            const newX = x + dx;
+            const newY = y + dy;
+
+            if (newX < 0 || newY < 0 || newX >= rows || newY >= cols) return; // Out of bounds
+            const nextCell = maze[newX][newY];
+
+            if (nextCell === 'wall') return; // Blocked by a wall
+
+            // Move player
+            const currentCell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+            const nextCellDiv = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
+
+            currentCell.classList.remove('player');
+            nextCellDiv.classList.add('player');
+
+            playerPosition = { x: newX, y: newY };
+
+            // Check for win
+            if (nextCell === 'end') {
+                triggerWin();
+            }
+        }
+
+        function triggerWin() {
+            // Hide congratulatory message when confetti is triggered
+            const congratsMessage = document.getElementById('congrats-message');
+            congratsMessage.style.display = 'none';
+
+            // Trigger enhanced confetti
+            const duration = 3 * 1000; // 3 seconds
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 7,
+                    angle: Math.random() * 60 + 150, // Spread across a wider angle
+                    spread: 100,
+                    startVelocity: 30,
+                    gravity: 0.5,
+                    origin: {
+                        x: Math.random(),
+                        y: Math.random() - 0.2,
+                    },
+                    colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+
+        function restartGame() {
+            const congratsMessage = document.getElementById('congrats-message');
+            congratsMessage.style.display = 'none';
+            renderMaze(maze);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp': movePlayer(-1, 0); break;
+                case 'ArrowDown': movePlayer(1, 0); break;
+                case 'ArrowLeft': movePlayer(0, -1); break;
+                case 'ArrowRight': movePlayer(0, 1); break;
+            }
+        });
+
+        const maze = generateMaze(rows, cols);
+        renderMaze(maze);
+    </script>
+</body>
+</html>
